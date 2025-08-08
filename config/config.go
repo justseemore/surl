@@ -20,13 +20,14 @@ type Config struct {
 	CustomDomain  string
 	DBPath        string
 	RedisAddr     string
-	RedisPassword string // 新增Redis密码字段
+	RedisPassword string
 	RedisDB       int
 	CacheExpiry   int // 分钟
+	CacheMaxItems int // 新增：内存缓存最大项目数
 	JWTSecret     string
-	Accounts      []Account // 替换单一管理员账户
-	MaxURLLength  int       // 最大URL长度
-	DefaultExpiry int       // 默认过期时间（小时）
+	Accounts      []Account
+	MaxURLLength  int
+	DefaultExpiry int
 }
 
 func Load() *Config {
@@ -38,6 +39,7 @@ func Load() *Config {
 
 	redisDB, _ := strconv.Atoi(getEnv("REDIS_DB", "0"))
 	cacheExpiry, _ := strconv.Atoi(getEnv("CACHE_EXPIRY", "60"))
+	cacheMaxItems, _ := strconv.Atoi(getEnv("CACHE_MAX_ITEMS", "10000")) // 新增
 	maxURLLength, _ := strconv.Atoi(getEnv("MAX_URL_LENGTH", "2048"))
 	defaultExpiry, _ := strconv.Atoi(getEnv("DEFAULT_EXPIRY", "8760")) // 1年
 
@@ -52,6 +54,7 @@ func Load() *Config {
 		RedisPassword: getEnv("REDIS_PASSWORD", ""), // 新增Redis密码配置
 		RedisDB:       redisDB,
 		CacheExpiry:   cacheExpiry,
+		CacheMaxItems: cacheMaxItems, // 新增
 		JWTSecret:     getEnv("JWT_SECRET", "default_jwt_secret_change_in_production"),
 		Accounts:      accounts,
 		MaxURLLength:  maxURLLength,

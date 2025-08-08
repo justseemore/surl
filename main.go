@@ -34,8 +34,8 @@ func main() {
 		log.Fatal("Failed to initialize database:", err)
 	}
 
-	// 初始化服务 - 使用完整的缓存管理器构造函数
-	cacheManager := cache.NewCacheManager(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB, cfg.CacheExpiry)
+	// 初始化服务 - 使用带内存限制的缓存管理器
+	cacheManager := cache.NewCacheManager(cfg.RedisAddr, cfg.RedisPassword, cfg.RedisDB, cfg.CacheExpiry, cfg.CacheMaxItems)
 	urlService := services.NewURLService(cacheManager, models.DB, cfg)
 	authService := services.NewAuthService(cfg)
 

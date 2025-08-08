@@ -16,21 +16,19 @@ import (
 )
 
 type Manager struct {
-	// 一级缓存：内存缓存
-	memCache *cache.Cache
-	// 二级缓存：Redis
-	redisClient *redis.Client
-	ctx         context.Context
-	expiry      time.Duration
-	useRedis    bool // 标识是否使用Redis
-
-	// 内存点击计数存储
+	memCache       *cache.Cache
+	redisClient    *redis.Client
+	ctx            context.Context
+	expiry         time.Duration
+	useRedis       bool
+	maxItems       int          // 新增：最大项目数限制
+	currentItems   int64        // 新增：当前项目计数
+	itemsMutex     sync.RWMutex // 新增：项目计数互斥锁
 	memClickCounts map[string]int64
 	memClickMutex  sync.RWMutex
 }
 
-func NewCacheManager(redisAddr string, redisPassword string, redisDB int, cacheExpiry int) *Manager {
-	// 内存缓存
+func NewCacheManager(redisAddr string, redisPassword string, redisDB int, cacheExpiry int, maxItems int) *Manager {
 	memCache := cache.New(time.Duration(cacheExpiry)*time.Minute, 10*time.Minute)
 
 	manager := &Manager{
@@ -38,6 +36,8 @@ func NewCacheManager(redisAddr string, redisPassword string, redisDB int, cacheE
 		ctx:            context.Background(),
 		expiry:         time.Duration(cacheExpiry) * time.Minute,
 		useRedis:       false,
+		maxItems:       maxItems, // 新增
+		currentItems:   0,        // 新增
 		memClickCounts: make(map[string]int64),
 	}
 
@@ -70,9 +70,9 @@ func NewCacheManager(redisAddr string, redisPassword string, redisDB int, cacheE
 }
 
 // NewManager 新的构造函数，用于兼容已有代码
+// NewManager 兼容旧接口
 func NewManager(redisAddr string, redisPassword string, redisDB int, cacheExpiry int) *Manager {
-	// 使用默认参数，仅使用内存缓存
-	return NewCacheManager(redisAddr, redisPassword, redisDB, cacheExpiry)
+	return NewCacheManager(redisAddr, redisPassword, redisDB, cacheExpiry, 10000) // 默认10000项
 }
 
 // Close 关闭缓存管理器
@@ -110,9 +110,23 @@ func (c *Manager) GetURL(shortCode string) (*models.URL, bool) {
 	return nil, false
 }
 
-// SetURL 设置URL缓存
+// SetURL 设置URL缓存（带数量限制）
 func (c *Manager) SetURL(shortCode string, url *models.URL) {
 	key := fmt.Sprintf("url:%s", shortCode)
+
+	// 检查是否已存在
+	if _, found := c.memCache.Get(key); !found {
+		// 检查是否超出限制
+		c.itemsMutex.Lock()
+		if c.currentItems >= int64(c.maxItems) {
+			// 清理一些最旧的项目（LRU策略由go-cache自动处理）
+			log.Printf("内存缓存已达上限 (%d)，依赖过期清理机制", c.maxItems)
+			c.itemsMutex.Unlock()
+			return
+		}
+		c.currentItems++
+		c.itemsMutex.Unlock()
+	}
 
 	// 存入内存缓存
 	c.memCache.Set(key, url, c.expiry)

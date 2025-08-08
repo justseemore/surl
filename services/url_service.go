@@ -132,27 +132,8 @@ func (s *URLService) GetURLByShortCode(shortCode string) (*models.URL, error) {
 		if url.IsActive && (url.ExpiresAt == nil || url.ExpiresAt.After(time.Now())) {
 			return url, nil
 		}
-		// 如果缓存中的数据无效，从缓存中删除
-		s.cacheManager.DeleteURL(shortCode)
 	}
-
-	// 缓存中没有或数据无效，从数据库查询
-	var url models.URL
-	err := s.db.Where("short_code = ? AND is_active = ?", shortCode, true).First(&url).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("短链接不存在")
-		}
-		return nil, fmt.Errorf("查询短链接失败: %v", err)
-	}
-
-	// 检查是否过期
-	if url.IsExpired() {
-		return nil, errors.New("链接已过期")
-	}
-	// 将有效的URL存入缓存
-	s.cacheManager.SetURL(shortCode, &url)
-	return &url, nil
+	return nil, errors.New("链接已失效")
 }
 
 // GetURLList 获取URL列表

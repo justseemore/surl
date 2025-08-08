@@ -10,7 +10,7 @@ import (
 
 type URL struct {
 	ID           uint           `json:"id" gorm:"primaryKey"`
-	ShortCode    string         `json:"short_code" gorm:"not null;index;uniqueIndex:idx_short_code_deleted"`
+	ShortCode    string         `json:"short_code" gorm:"not null;uniqueIndex:idx_short_code_deleted"`
 	OriginalURL  string         `json:"original_url" gorm:"not null;type:text"`
 	Title        string         `json:"title"`
 	Description  string         `json:"description" gorm:"type:text"`
