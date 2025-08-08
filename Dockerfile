@@ -35,6 +35,7 @@ FROM debian:bullseye-slim
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     sqlite3 \
+    dumb-init \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -55,4 +56,5 @@ RUN mkdir -p /app/data
 
 # 启动应用
 # 使用 ENTRYPOINT 确保容器始终执行主程序
-ENTRYPOINT ["./main"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["./main"]
