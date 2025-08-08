@@ -1,11 +1,20 @@
 # 多阶段构建 - 构建阶段
-FROM golang:1.24-alpine AS builder
+FROM golang:1.24-bullseye AS builder
 
 # 设置工作目录
 WORKDIR /app
 
 # 安装必要的系统依赖
-RUN apk add --no-cache git gcc musl-dev sqlite-dev
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libc6-dev \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置环境变量
+ENV CGO_ENABLED=1
+ENV GOOS=linux
+ENV GOARCH=amd64
 
 # 复制 go mod 文件
 COPY go.mod go.sum ./
@@ -16,18 +25,20 @@ RUN go mod download
 # 复制源代码
 COPY . .
 
-# 构建应用（修复构建命令）
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o main .
+# 构建应用
+RUN go build -a -installsuffix cgo -ldflags='-w -s' -o main .
 
 # 运行阶段
-FROM alpine:latest
+FROM debian:bullseye-slim
 
 # 安装运行时依赖
-RUN apk --no-cache add ca-certificates sqlite
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    sqlite3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # 创建应用用户
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 # 设置工作目录
 WORKDIR /app
@@ -38,7 +49,7 @@ COPY --from=builder /app/main .
 # 复制模板文件
 COPY --chown=appuser:appgroup templates ./templates
 
-# 复制配置文件（可选，如果不通过环境变量提供）
+# 复制配置文件
 COPY --chown=appuser:appgroup .env.example .env
 
 # 创建数据目录
