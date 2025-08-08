@@ -105,8 +105,7 @@ func setupRoutes(app *fiber.App, handler *handlers.Handler) {
 	app.Get("/login", handler.LoginPage)
 	app.Post("/api/login", handler.Login)
 	// 需要认证的管理路由
-	admin := app.Group("/admin")
-	admin.Get("/", handler.Admin)
+	app.Get("/admin.html", handler.Admin)
 	// 需要认证的API路由组
 	api := app.Group("/api")
 	api.Use(middleware.JWTMiddleware())
