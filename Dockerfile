@@ -54,4 +54,5 @@ COPY .env.example .env
 RUN mkdir -p /app/data
 
 # 启动应用
-CMD ["./main"]
+# 使用 ENTRYPOINT 确保容器始终执行主程序
+ENTRYPOINT ["./main"]
