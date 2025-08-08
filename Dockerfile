@@ -37,8 +37,6 @@ RUN apt-get update && apt-get install -y \
     sqlite3 \
     && rm -rf /var/lib/apt/lists/*
 
-# 创建应用用户
-RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
 # 设置工作目录
 WORKDIR /app
@@ -47,19 +45,16 @@ WORKDIR /app
 COPY --from=builder /app/main .
 
 # 复制模板文件
-COPY --chown=appuser:appgroup templates ./templates
+COPY  templates ./templates
 
 # 复制配置文件
-COPY --chown=appuser:appgroup .env.example .env
+COPY .env.example .env
 
 # 创建数据目录
 RUN mkdir -p /app/data && chown appuser:appgroup /app/data
 
 # 暴露端口
 EXPOSE 8080
-
-# 切换到非root用户
-USER appuser
 
 # 启动应用
 CMD ["./main"]

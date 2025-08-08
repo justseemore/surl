@@ -49,7 +49,7 @@ func Load() *Config {
 	return &Config{
 		Port:          getEnv("PORT", "3001"),
 		CustomDomain:  getEnv("CUSTOM_DOMAIN", "localhost:3000"),
-		DBPath:        getEnv("DB_PATH", "./surl.db"),
+		DBPath:        getEnv("DB_PATH", "./data/surl.db"),
 		RedisAddr:     getEnv("REDIS_ADDR", "localhost:6379"),
 		RedisPassword: getEnv("REDIS_PASSWORD", ""), // 新增Redis密码配置
 		RedisDB:       redisDB,
