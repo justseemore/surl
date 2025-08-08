@@ -243,7 +243,7 @@
                 .then(response => {
                     if (response.ok) {
                         // 已登录，跳转到管理页面
-                        window.location.href = '/admin';
+                        window.location.href = '/admin.html';
                     }
                 })
                 .catch(() => {
@@ -318,7 +318,7 @@
                         
                         // 延迟跳转，让用户看到成功消息
                         setTimeout(() => {
-                            window.location.href = '/admin';
+                            window.location.href = '/admin.html';
                         }, 1000);
                     } else {
                         // 登录失败

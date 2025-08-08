@@ -997,7 +997,7 @@
                     <td>${url.expires_at ? new Date(url.expires_at).toLocaleString() : '永久'}</td>
                     <td>
                         <div class="action-buttons">
-                            <button class="btn-icon btn-icon-edit" onclick="editUrl(${url.id},'${url.original_url}','${url.title}','${url.expires_at}')" title="编辑">
+                            <button class="btn-icon btn-icon-edit" onclick="editUrl(${url.id},'${url.original_url}','${url.title}','${url.expires_at}','${url.is_active}')" title="编辑">
                                 ✏️
                             </button>
                             <button class="btn-icon btn-icon-toggle ${url.is_active ? '' : 'disabled'}" onclick="toggleUrlStatus(${url.id}, ${!url.is_active})" title="${url.is_active ? '禁用' : '启用'}">
@@ -1215,8 +1215,8 @@
         }
         
         // 编辑URL
-        async function editUrl(id, original_url,title,expires_at) {
-            showEditModal({ id, original_url,  title,expires_at});
+        async function editUrl(id, original_url,title,expires_at,active) {
+            showEditModal({ id, original_url,  title,expires_at,active:active==="true"?true:false});
         }
         
         // 显示编辑模态框
@@ -1262,7 +1262,7 @@
             // 绑定表单提交事件
             document.getElementById('editForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                await updateUrl(url.id);
+                await updateUrl(url.id,url.active);
             });
             
             // 点击弹窗外部关闭
@@ -1274,7 +1274,7 @@
         }
         
         // 更新URL
-        async function updateUrl(id) {
+        async function updateUrl(id,active) {
             const editBtn = document.getElementById('editBtn');
             const editBtnText = document.getElementById('editBtnText');
             
@@ -1297,7 +1297,8 @@
             const formData = {
                 original_url: originalUrl,
                 title: title || null,
-                expires_at: expiresAt
+                expires_at: expiresAt,
+                is_active:active
             };
             
             try {
@@ -1319,7 +1320,7 @@
                         closeModal();
                         loadUrls(currentPage);
                         loadStats();
-                    }, 1500);
+                    }, 500);
                 } else {
                     const error = await response.json();
                     const errorDiv = document.getElementById('editModalErrorMessage');

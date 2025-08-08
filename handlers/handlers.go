@@ -172,6 +172,7 @@ func (h *Handler) UpdateURL(c *fiber.Ctx) error {
 		OriginalURL string     `json:"original_url"`
 		Title       string     `json:"title"`
 		ExpiresAt   *time.Time `json:"expires_at"`
+		IsActive    bool       `json:"is_active"`
 	}
 
 	var req UpdateRequest
@@ -183,7 +184,7 @@ func (h *Handler) UpdateURL(c *fiber.Ctx) error {
 
 	// 修复：添加updatedBy参数
 	username := c.Locals("username").(string)
-	err = h.urlService.UpdateURL(uint(id), req.OriginalURL, req.Title, req.ExpiresAt, username)
+	err = h.urlService.UpdateURL(uint(id), req.OriginalURL, req.Title, req.ExpiresAt, req.IsActive, username)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"error": "更新失败: " + err.Error(),

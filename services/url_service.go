@@ -204,7 +204,7 @@ func (s *URLService) IncrementClickCount(shortCode string) {
 // }
 
 // UpdateURL 更新URL
-func (s *URLService) UpdateURL(id uint, originalURL, title string, expiresAt *time.Time, updatedBy string) error {
+func (s *URLService) UpdateURL(id uint, originalURL, title string, expiresAt *time.Time, active bool, updatedBy string) error {
 	var url models.URL
 	if err := s.db.First(&url, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -236,6 +236,10 @@ func (s *URLService) UpdateURL(id uint, originalURL, title string, expiresAt *ti
 
 	if expiresAt != nil {
 		updates["expires_at"] = expiresAt
+	}
+
+	if active != url.IsActive {
+		updates["is_active"] = active
 	}
 
 	err := s.db.Model(&url).Updates(updates).Error
