@@ -17,8 +17,7 @@ RUN go mod download
 COPY . .
 
 # 构建应用
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o main .
-
+RUN go build -o main main.go
 # 运行阶段
 FROM alpine:latest
 
