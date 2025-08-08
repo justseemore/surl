@@ -51,10 +51,7 @@ COPY  templates ./templates
 COPY .env.example .env
 
 # 创建数据目录
-RUN mkdir -p /app/data && chown appuser:appgroup /app/data
-
-# 暴露端口
-EXPOSE 8080
+RUN mkdir -p /app/data
 
 # 启动应用
 CMD ["./main"]
