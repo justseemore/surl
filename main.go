@@ -40,7 +40,7 @@ func main() {
 	authService := services.NewAuthService(cfg)
 
 	// 启动异步任务
-	go urlService.StartClickCountSync() // 修复：StartClickSyncWorker -> StartClickCountSync
+	go urlService.StartClickCountSync()
 
 	// 启动缓存预热
 	urlService.WarmupCache()
@@ -100,6 +100,7 @@ func main() {
 func setupRoutes(app *fiber.App, handler *handlers.Handler) {
 	// 添加UA检测中间件到需要检测的路由
 	app.Use(middleware.UADetector())
+	app.Get("/", handler.Index)
 	// 公开路由
 	app.Get("/login", handler.LoginPage)
 	app.Post("/api/login", handler.Login)
