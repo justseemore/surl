@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.title}}</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        max-width: 480px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        animation: slideUp 0.6s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 28px;
+      }
+
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      h3 {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 15px;
+        color: #555;
+      }
+
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #666;
+      }
+
+      .url-box {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border: 2px solid #e9ecef;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 25px 0;
+        word-break: break-all;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 14px;
+        color: #495057;
+        position: relative;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+
+      .url-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .url-box:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+      }
+
+      .url-box:hover::before {
+        left: 100%;
+      }
+
+      .copy-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        min-width: 140px;
+      }
+
+      .copy-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+      }
+
+      .copy-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .copy-btn:hover::before {
+        left: 100%;
+      }
+
+      .copy-btn:active {
+        transform: translateY(0);
+      }
+
+      .tip {
+        color: #6c757d;
+        margin-top: 25px;
+        font-size: 14px;
+        line-height: 1.5;
+        padding: 15px;
+        background: rgba(108, 117, 125, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+      }
+
+      .success-animation {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(40, 167, 69, 0.95);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 50px;
+        font-weight: 500;
+        z-index: 1000;
+        animation: successPop 2s ease-out forwards;
+      }
+
+      @keyframes successPop {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        20% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1.1);
+        }
+        80% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1);
+        }
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 480px) {
+        .container {
+          margin: 10px;
+          padding: 30px 20px;
+          border-radius: 15px;
+        }
+
+        h2 {
+          font-size: 20px;
+        }
+
+        .url-box {
+          padding: 15px;
+          font-size: 13px;
+        }
+
+        .copy-btn {
+          padding: 12px 28px;
+          font-size: 14px;
+        }
+      }
+
+      /* 深色模式支持 */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        }
+
+        .container {
+          background: rgba(45, 55, 72, 0.95);
+          color: #e2e8f0;
+        }
+
+        .url-box {
+          background: linear-gradient(135deg, #4a5568, #2d3748);
+          border-color: #4a5568;
+          color: #e2e8f0;
+        }
+
+        .tip {
+          background: rgba(74, 85, 104, 0.3);
+          color: #cbd5e0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="icon">🔗</div>
+      
+      <h2>{{if .isWeChat}}微信{{else if .isQQ}}QQ{{end}}访问提示</h2>
+
+      {{if .title_text}}
+      <h3>{{.title_text}}</h3>
+      {{end}} 
+      
+      <p>请复制以下链接到浏览器中打开：</p>
+
+      <div class="url-box" id="originalUrl">{{.originalURL}}</div>
+
+      <button class="copy-btn" onclick="copyUrl()">复制链接</button>
+
+      <div class="tip">
+        {{if .isWeChat}} 
+        💡 由于微信限制，请点击右上角菜单选择"在浏览器中打开"
+        {{else if .isQQ}} 
+        💡 由于QQ限制，请点击右上角菜单选择"在浏览器中打开"
+        {{end}}
+      </div>
+    </div>
+
+    <script>
+      function copyUrl() {
+        const urlText = document.getElementById("originalUrl").textContent;
+        
+        // 现代化的复制功能
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(urlText)
+            .then(() => {
+              showSuccessMessage("链接已复制到剪贴板！ 📋");
+            })
+            .catch(() => {
+              fallbackCopy(urlText);
+            });
+        } else {
+          fallbackCopy(urlText);
+        }
+      }
+
+      function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+          document.execCommand("copy");
+          showSuccessMessage("链接已复制到剪贴板！ 📋");
+        } catch (err) {
+          showSuccessMessage("请手动复制链接");
+        }
+        
+        document.body.removeChild(textArea);
+      }
+
+      function showSuccessMessage(message) {
+        // 移除现有的提示
+        const existingAlert = document.querySelector('.success-animation');
+        if (existingAlert) {
+          existingAlert.remove();
+        }
+
+        // 创建新的提示
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'success-animation';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        // 自动移除
+        setTimeout(() => {
+          if (alertDiv.parentNode) {
+            alertDiv.remove();
+          }
+        }, 2000);
+      }
+
+      // 页面加载完成后的初始化
+      document.addEventListener('DOMContentLoaded', function() {
+        // 添加键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+          if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+            e.preventDefault();
+            copyUrl();
+          }
+        });
+
+        // 添加长按复制功能（移动端）
+        const urlBox = document.getElementById('originalUrl');
+        let pressTimer;
+        
+        urlBox.addEventListener('touchstart', function(e) {
+          pressTimer = setTimeout(() => {
+            copyUrl();
+            // 提供触觉反馈
+            if (navigator.vibrate) {
+              navigator.vibrate(50);
+            }
+          }, 500);
+        });
+
+        urlBox.addEventListener('touchend', function() {
+          clearTimeout(pressTimer);
+        });
+
+        urlBox.addEventListener('touchmove', function() {
+          clearTimeout(pressTimer);
+        });
+
+        // 添加双击复制功能
+        urlBox.addEventListener('dblclick', function() {
+          copyUrl();
+        });
+      });
+    </script>
+  </body>
+</html>
