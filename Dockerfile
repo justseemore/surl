@@ -16,8 +16,9 @@ RUN go mod download
 # 复制源代码
 COPY . .
 
-# 构建应用
-RUN go build -o main main.go
+# 构建应用（修复构建命令）
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o main .
+
 # 运行阶段
 FROM alpine:latest
 
@@ -42,6 +43,9 @@ COPY --chown=appuser:appgroup .env.example .env
 
 # 创建数据目录
 RUN mkdir -p /app/data && chown appuser:appgroup /app/data
+
+# 暴露端口
+EXPOSE 8080
 
 # 切换到非root用户
 USER appuser
