@@ -61,7 +61,9 @@ func (s *URLService) validateURL(rawURL string) (string, error) {
 	if len(rawURL) > s.config.MaxURLLength {
 		return "", fmt.Errorf("URL长度不能超过%d个字符", s.config.MaxURLLength)
 	}
-
+	if strings.HasPrefix(rawURL, "data:") {
+		return rawURL, nil
+	}
 	// 验证URL格式
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
