@@ -28,6 +28,8 @@ type Config struct {
 	Accounts      []Account
 	MaxURLLength  int
 	DefaultExpiry int
+	Page404       string
+	Page403       string
 }
 
 func Load() *Config {
@@ -59,6 +61,8 @@ func Load() *Config {
 		Accounts:      accounts,
 		MaxURLLength:  maxURLLength,
 		DefaultExpiry: defaultExpiry,
+		Page404:       getEnv("PAGE_404", "https://wx.gtimg.com/core/404.html"),
+		Page403:       getEnv("PAGE_403", "https://wx.gtimg.com/core/404.html"),
 	}
 }
 

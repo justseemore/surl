@@ -344,18 +344,19 @@ func (h *Handler) Logout(c *fiber.Ctx) error {
 func (h *Handler) Redirect(c *fiber.Ctx) error {
 	shortCode := c.Params("code")
 	if shortCode == "" {
-		return c.Status(404).SendString("短代码不能为空")
+		return c.Redirect(h.config.Page404)
+
 	}
 
 	// 获取URL信息
 	url, err := h.urlService.GetURLByShortCode(shortCode)
 	if err != nil {
-		return c.Status(404).SendString("短链接不存在或已过期")
+		return c.Redirect(h.config.Page404)
 	}
 
 	// 检查是否激活
 	if !url.IsActive {
-		return c.Status(404).SendString("短链接已禁用")
+		return c.Redirect(h.config.Page403)
 	}
 	// 增加点击计数
 	h.urlService.IncrementClickCount(shortCode)
